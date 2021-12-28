@@ -60,6 +60,12 @@ textarea {
     font-weight: normal;
 }
 
+pre {
+	font-family: monospace, monospace;
+	font-size: 1em;
+	white-space: pre-wrap;
+}
+
 select {
     border: none;
     -webkit-appearance: none;
