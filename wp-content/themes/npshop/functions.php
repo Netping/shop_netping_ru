@@ -8,7 +8,7 @@
  */
 
 if ( ! defined( '_S_VERSION' ) ) {
-	define( '_S_VERSION', '1.2.0' );
+	define( '_S_VERSION', '1.2.1' );
 }
 
 //SECTION General setup
@@ -947,9 +947,6 @@ function npshop_save_variation_settings_fields( $post_id ) {
 	}
 }
 
-
-
-
 //ANCHOR wrap not sale prices of variations
 add_filter( 'woocommerce_available_variation', 'my_variation', 10, 3);
 function my_variation( $data, $product, $variation ) {
@@ -987,17 +984,6 @@ function npshop_warranty_tab_content() {
 
 //ANCHOR remove heading from description product tab
 add_filter( 'woocommerce_product_description_heading', '__return_false' );
-
-
-//ANCHOR add navigation arrows for single product gallery
-add_filter('woocommerce_single_product_carousel_options', 'update_woo_flexslider_options');
-function update_woo_flexslider_options($options) {
-      $options['directionNav'] = true;
-	  $options['prevText'] = '' ;
-	  $options['nextText'] = '' ;
-      return $options;
-  }
-
 
 //ANCHOR change columns for thumbnails in product gallery
 add_filter( 'woocommerce_single_product_image_gallery_classes', 'npshop_product_gallery_thumbnails_columns' );

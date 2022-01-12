@@ -22,12 +22,6 @@ defined( 'ABSPATH' ) || exit;
  */
 do_action( 'woocommerce_cart_is_empty' );
 
-// global $wp;
-// echo '<pre>';
-// var_dump( $wp );
-// echo is_wc_endpoint_url( 'order-received' );
-// echo $wp->request;
-
 ?>
 <div class="empty-cart-wrapper">
 	<img src="<?php echo get_stylesheet_directory_uri() ?>/assets/icons/empty_cart.png" style='margin-bottom:30px;' alt="Корзина пуста">

@@ -5,7 +5,7 @@ Description:    Storefront child theme.
 Author:         qzya
 Author URI:     
 Template:       storefront
-Version:        0.1.0
+Version:        1.2.1
 */
 
 /*FONTS */
@@ -347,6 +347,11 @@ footer .price_link:before {
     margin-left: 30px;
 }
 
+.woocommerce-cart .footer-widgets h1.entry-title:after,
+.woocommerce-checkout .footer-widgets h1.entry-title:after {
+    display: none;
+}
+
 .widget-area .widget a {
     text-decoration: none;
     color: initial;
@@ -642,7 +647,8 @@ footer .price_link:before {
 }
 
 .footer-widgets {
-    padding-top: 25px ;
+    padding-top: 25px;
+    margin-bottom: 15px;
 }
 
 .footer-widgets .widget {
@@ -1213,17 +1219,12 @@ del .nds_notice {
     right: -40px;
 }
 
-.flex-direction-nav li a{
+.flex-direction-nav li a {
     text-decoration: none;
     display: block;
     width: 20px;
     height: 30px;
-    /* margin: -20px 0 0; */
     position: absolute;
-    /* top: 50%; */
-    /* z-index: 10; */
-    /* overflow: hidden; */
-    /* opacity: 0; */
     cursor: pointer;
     color: rgba(0, 0, 0, 0.8);
     text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.3);
@@ -1234,10 +1235,16 @@ del .nds_notice {
     transition: all 0.3s ease-in-out;
 }
 
-.single-product div.product .woocommerce-product-gallery .flex-control-thumbs,
-.single-product div.product .woocommerce-product-gallery .flex-viewport {
-    width: 100%;
-    margin: 20px;
+.single-product div.product .woocommerce-product-gallery .flex-control-thumbs {
+    display: flex;
+}
+
+.storefront-full-width-content.single-product div.product .woocommerce-product-gallery .flex-control-thumbs li:not(:last-child) {
+    margin: 0 5px 0 0 !important;
+}
+
+.storefront-full-width-content.single-product div.product .woocommerce-product-gallery .flex-control-thumbs li:last-child {
+    margin: 0;
 }
 
 .single-product div.product .woocommerce-product-gallery .woocommerce-product-gallery__image a {
