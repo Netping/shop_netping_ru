@@ -7,6 +7,10 @@
  * @package npshop
  */
 
+if ( ! defined( '_S_VERSION' ) ) {
+	define( '_S_VERSION', '1.2.1' );
+}
+
 //SECTION General setup
 
 //ANCHOR load scripts
@@ -179,8 +183,33 @@ function remove_sale_price_on_category( $price, $regular_price, $sale_price ) {
 	return $price;
 }
 
-
 //!SECTION Prices formatting
+
+//ANCHOR shortcode to include external files. Params: file - path to external file in theme directory, wrapper - tag to wrap with (default is pre), class - class for wrapper.
+add_shortcode( 'show_file', 'show_external_file' );
+/**
+ * Shortcode to include external files from the theme directory.
+ * eg. [show_file file="changelog.md"]
+ * 
+ * @param string $file path to external file in the theme directory
+ * @param string $wrapper tag to wrap with (default is pre)
+ * @param string $class class for wrapper
+ * @return string
+ */
+function show_external_file( $atts ) {
+	extract( shortcode_atts( array(
+	    	'file'    => '',
+			'wrapper' => 'pre',
+			'class'   => '',
+		), 
+	$atts ));
+
+	if ($file != '') {
+		echo '<' . $wrapper . ' class="' . $class . '">';
+		echo @file_get_contents(get_stylesheet_directory() . '/' .$file);
+		echo '</' . $wrapper. '>';
+	}
+}
 
 // ANCHOR Rename 'posts' to 'Новости'
 
@@ -264,7 +293,6 @@ function npshop_woocommerce_breadcrumbs($defaults) {
     $defaults['delimiter'] = '<span class="delim"> / </span>';
 	if ( is_cart() && WC()->cart->get_cart_contents_count() !== 0 ) {
 		$defaults['wrap_after']  = '</nav><div class="share-cart">' . cart_ya_share_link_html() . '</div></div></div>';
-		// $defaults['wrap_after']  = '</nav><div class="share-cart">' . 'поделиться корзиной' . '</div></div></div>';
 	}
 	return $defaults;
 }
@@ -285,6 +313,7 @@ add_filter( 'woocommerce_get_breadcrumb', function($crumbs, $Breadcrumb) {
 //ANCHOR remove autop in CF7
 add_action( 'wpcf7_autop_or_not', '__return_false' );
 
+//ANCHOR change variable price format
 add_filter('woocommerce_variable_price_html', 'custom_variation_price', 10, 2);
 function custom_variation_price( $price, $product ) {
     if ( ! empty($product->min_variation_price) && is_product_category() ) {
@@ -294,7 +323,6 @@ function custom_variation_price( $price, $product ) {
 
     return $price;
 }
-
 
 //!SECTION General setup
 
@@ -381,11 +409,9 @@ function npshop_header_cart_link() {
 		?>
 			<a class="cart-contents npshop-cart" href="<?php echo esc_url( wc_get_cart_url() ); ?>" title="<?php esc_attr_e( 'View your shopping cart', 'storefront' ); ?>">
 				<div class="icon_cart_container">
-					<!-- <i class="fas fa-shopping-basket"></i> -->
 					<div class="npicon icon_cart"></div>
 					<span class="circle_count"><?php echo wp_kses_data( sprintf( WC()->cart->get_cart_contents_count() )); ?></span>
 				</div>
-				<?php //echo wp_kses_post( WC()->cart->get_cart_subtotal() ); ?>
 			</a>
 		<?php
 	}
@@ -441,7 +467,7 @@ function under_header_widget_on_mobile() {
 
 //SECTION FOOTER
 
-//ANCHOR customize credit
+//ANCHOR customize credits
 add_action('init', function() {
 	remove_action( 'storefront_footer', 'storefront_credit', 20 );
 	add_action( 'storefront_footer', 'npshop_credit', 20 );
@@ -485,21 +511,16 @@ function register_rpwi_widget() {
     register_widget( 'WP_Widget_Recent_Posts_With_Images' );
 }
 
-
 //!SECTION Widgets
 
 
-
-
 //SECTION Archive pages
-
 
 //ANCHOR add short description for product on archive page
 add_action('woocommerce_after_shop_loop_item_title', 'add_short_desc_to_archive_product', 3);
 function add_short_desc_to_archive_product() {
 	global $product;
-	// echo '<div class="archive-product-desc">' . substr($product->get_short_description(), 0, 250 ) . '</div>';
-	echo '<div class="archive-product-desc">' . wp_trim_excerpt($product->get_short_description()) . '</div>';
+	echo '<div class="archive-product-desc">' . get_field('archives_desc', $product->get_ID()) . '</div>';
 }
 
 //ANCHOR length of excerpt in words
@@ -513,9 +534,6 @@ add_filter( 'excerpt_more', 'change_excerpt_more_link' );
 function change_excerpt_more_link( $more ) {
 	return '&hellip;';
 }
-
-
-
 
 //ANCHOR change archive page add to cart button behavior
 add_filter( 'woocommerce_loop_add_to_cart_link', 'add_to_cart_custom_button' );
@@ -566,14 +584,14 @@ function output_category_image() {
 	}
 }
 
-
 //ANCHOR add TinyMCE for category descriptions 
 add_action("product_cat_edit_form_fields", 'add_tinymce_for_cat_description_field', 10, 2);
 function add_tinymce_for_cat_description_field($term, $taxonomy) {
-	$settings = array('wpautop' => true, 
-						'media_buttons' => false,
-						'quicktags' => false, 
-						'textarea_rows' => '30' ); 
+	$settings = array(
+		'wpautop'       => true, 
+		'media_buttons' => false,
+		'quicktags'     => false, 
+		'textarea_rows' => '30' ); 
     ?>
     <tr valign="top">
         <th scope="row"></th>
@@ -592,8 +610,8 @@ function add_tinymce_for_cat_description_field($term, $taxonomy) {
 //ANCHOR allow html tags for category description
 remove_filter( 'pre_term_description', 'wp_filter_kses' );
 
-
 //!SECTION Archive pages
+
 
 //SECTION Single product page
 
@@ -711,12 +729,6 @@ function npshop_save_compatible_products_fields( $post_id ){
 	if ( isset($_POST['compat_devices_ids']) ) {
 		update_post_meta( $post_id, '_compatible_devices_ids', $_POST['compat_devices_ids'] );
 	}
-	// $compat_sensors = $_POST['compat_sens_ids'];
-	// $compat_accessories =  $_POST['compat_access_ids'];
-	// $compat_devices =  $_POST['compat_devices_ids'];
-    // update_post_meta( $post_id, '_compatible_sensors_ids', $compat_sensors );
-	// update_post_meta( $post_id, '_compatible_accessories_ids', $compat_accessories );
-	// update_post_meta( $post_id, '_compatible_devices_ids', $compat_devices );
 }
 
 //ANCHOR output compatible products
@@ -734,7 +746,7 @@ function compatible_devices_list() {
 			// echo '<h3>Датчики для контроллеров</h3>';
 			foreach ( $compat_sens_ids as $compat_sens_id ) {
 				$compat_product = wc_get_product($compat_sens_id);
-				if ($compat_product) {
+				if ($compat_product && 'trash' !== $compat_product->get_status() ) {
 				?>
 					<div class="compat-product <?php echo !$compat_product->is_purchasable() ? 'disabled' : '' ?>">
 						<?php echo $compat_product->get_image('micro_thumb'); ?>
@@ -755,7 +767,7 @@ function compatible_devices_list() {
 			// echo '<h3>Аксессуары для контроллеров</h3>';
 			foreach ( $compat_access_ids as $compat_access_id ) {
 				$compat_product = wc_get_product($compat_access_id);
-				if ($compat_product) {
+				if ($compat_product && 'trash' !== $compat_product->get_status() ) {
 				?>
 					<div class="compat-product <?php echo !$compat_product->is_purchasable() ? 'disabled' : '' ?>">
 						<?php echo $compat_product->get_image('micro_thumb'); ?>
@@ -770,7 +782,6 @@ function compatible_devices_list() {
 			}
 			echo '</div>';
 		}
-
 		echo '</div>';
 	}
 
@@ -936,9 +947,6 @@ function npshop_save_variation_settings_fields( $post_id ) {
 	}
 }
 
-
-
-
 //ANCHOR wrap not sale prices of variations
 add_filter( 'woocommerce_available_variation', 'my_variation', 10, 3);
 function my_variation( $data, $product, $variation ) {
@@ -976,17 +984,6 @@ function npshop_warranty_tab_content() {
 
 //ANCHOR remove heading from description product tab
 add_filter( 'woocommerce_product_description_heading', '__return_false' );
-
-
-//ANCHOR add navigation arrows for single product gallery
-add_filter('woocommerce_single_product_carousel_options', 'update_woo_flexslider_options');
-function update_woo_flexslider_options($options) {
-      $options['directionNav'] = true;
-	  $options['prevText'] = '' ;
-	  $options['nextText'] = '' ;
-      return $options;
-  }
-
 
 //ANCHOR change columns for thumbnails in product gallery
 add_filter( 'woocommerce_single_product_image_gallery_classes', 'npshop_product_gallery_thumbnails_columns' );
@@ -1266,7 +1263,4 @@ function update_cart_total_price() {
     die();
 }
 
-
 //!SECTION Checkout process custiomizations
-
-

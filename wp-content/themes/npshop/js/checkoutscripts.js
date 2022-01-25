@@ -1,13 +1,3 @@
-// jQuery(document).ready(function(){
-    // var content = jQuery('input[type="text"]').attr('placeholder');
-    // jQuery('input:text').attr('placeholder', content+'*');
-    // jQuery('.form-row.validate-required input').each( function() {
-    //     plchldr = jQuery(this).attr('placeholder');
-    //     jQuery(this).attr('placeholder', plchldr +' *');
-    // });
-
-// });
-
 //update order total price on updated_checkout event
 (function($) {
     $(document).ready(function(){

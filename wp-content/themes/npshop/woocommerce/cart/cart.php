@@ -37,18 +37,11 @@ do_action( 'woocommerce_before_cart' ); ?>
 			<?php do_action( 'woocommerce_before_cart_contents' ); ?>
 
 			<?php
-			// echo '<pre>';
-			// var_dump(WC()->cart->get_cart());
-			// echo '</pre>';
 
 			$cart_ids = array();
 			foreach ( WC()->cart->get_cart() as $cart_item_key => $cart_item ) {
 				$cart_ids[] = $cart_item['product_id'];
 			}
-
-			// echo '<pre>';
-			// var_dump($cart_ids);
-			// echo '</pre>';
 
 			foreach ( WC()->cart->get_cart() as $cart_item_key => $cart_item ) {
 				$_product   = apply_filters( 'woocommerce_cart_item_product', $cart_item['data'], $cart_item, $cart_item_key );
@@ -85,18 +78,6 @@ do_action( 'woocommerce_before_cart' ); ?>
 							$compat_devices = get_post_meta( $_product->get_ID(), '_compatible_devices_ids', true );
 						}
 
-						if ( !empty($compat_devices) ) {
-							// var_dump( array_intersect( $cart_ids, $compat_devices ) );
-						}
-
-
-						
-
-						// echo '<pre>';
-						// var_dump($cart_item['data']);
-						// echo $_product->post_type;
-						// var_dump( $compat_devices );
-						// echo '</pre>';
 						do_action( 'woocommerce_after_cart_item_name', $cart_item, $cart_item_key );
 
 						// Meta data.
